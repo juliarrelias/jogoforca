@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Jogo da Forca Multiplayer</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f6f4ef;--card:#fff;--tx:#1d1d1f;--mu:#6b6b70;--ac:#c2410c;--ok:#15803d;--bad:#b91c1c;--bd:#ddd8cc}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#16161a;--card:#202026;--tx:#f1f1f3;--mu:#9a9aa3;--ac:#fb923c;--ok:#4ade80;--bad:#f87171;--bd:#34343c}}
+:root[data-theme="dark"]{--bg:#16161a;--card:#202026;--tx:#f1f1f3;--mu:#9a9aa3;--ac:#fb923c;--ok:#4ade80;--bad:#f87171;--bd:#34343c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.4}
+main{max-width:640px;margin:0 auto;padding:16px}
+h1{font-size:1.5rem;margin:.2em 0 .6em;text-align:center}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px;margin-bottom:12px}
+input,select{width:100%;padding:10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font-size:1rem;margin:4px 0}
+button{font:inherit;cursor:pointer;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:8px;padding:10px 14px}
+button.p{background:var(--ac);color:#fff;border-color:var(--ac);font-weight:600}
+button:disabled{opacity:.35;cursor:default}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.sc{display:flex;gap:8px;flex-wrap:wrap}
+.pl{flex:1;min-width:90px;border:2px solid var(--bd);border-radius:10px;padding:8px;text-align:center}
+.pl.on{border-color:var(--ac)}
+.pl b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pl span{font-size:1.4rem;font-weight:700}
+.word{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:10px 0}
+.word i{width:34px;height:44px;border-bottom:3px solid var(--tx);font:700 1.7rem/44px system-ui;text-align:center;font-style:normal;text-transform:uppercase}
+.kb{display:grid;grid-template-columns:repeat(auto-fit,minmax(40px,1fr));gap:6px}
+.kb button{padding:10px 0;font-weight:700;text-transform:uppercase}
+.kb .h{background:var(--ok);color:#fff;border-color:var(--ok)}
+.kb .m{background:var(--bad);color:#fff;border-color:var(--bad)}
+svg{width:170px;height:190px;display:block;margin:0 auto}
+svg *{stroke:var(--tx);stroke-width:4;fill:none;stroke-linecap:round}
+.msg{text-align:center;font-weight:600;min-height:1.4em}
+.mu{color:var(--mu);font-size:.85rem}
+</style>
+</head>
+<body>
+<main>
+<h1>🪢 Jogo da Forca</h1>
+<div id="app"></div>
+</main>
+<script>
+const THEMES={
+"Animais":`cachorro gato cavalo elefante girafa leao tigre macaco zebra coelho tartaruga jacare cobra golfinho baleia tubarao polvo caranguejo aranha formiga abelha borboleta besouro mosquito pardal papagaio coruja aguia pinguim galinha pato ganso porco ovelha cabra burro camelo lobo raposa veado esquilo morcego hipopotamo rinoceronte canguru coala panda gorila chimpanze avestruz flamingo tucano beijaflor joaninha libelula gafanhoto lagarta minhoca caracol lesma morsa lontra castor tamandua preguica tatu capivara onca jaguatirica arara urubu gaviao falcao cegonha pelicano gaivota salmao sardinha atum piranha arraia lagosta camarao ostra mexilhao sapo perereca salamandra iguana camaleao lagarto escorpiao carrapato pulga barata grilo cigarra vespa marimbondo libelinha cavalinho potro bezerro novilho touro boi bode carneiro cordeiro leitoa frango pintinho codorna faisao pavao rouxinol canario sabia bemtevi andorinha pombo rolinha beija tiziu corvo cisne marreco garca jaburu socozinho tartaruga cagado cascavel jiboia sucuri coral`,
+"Casa e Objetos":`casa apartamento quarto cozinha banheiro sala janela porta telhado parede chao escada varanda garagem jardim quintal portao cerca muro tijolo cimento areia tinta pincel martelo prego parafuso serrote furadeira alicate chave fechadura campainha lampada tomada interruptor fiacao cano torneira chuveiro pia vaso ralo tapete cortina sofa poltrona cadeira mesa banco armario guarda gaveta prateleira estante cama colchao travesseiro cobertor lencol edredom almofada espelho quadro relogio calendario vassoura rodo balde esponja sabao detergente toalha escova pente shampoo sabonete perfume`,
+"Comidas e Bebidas":`arroz feijao macarrao farinha farofa pao bolo biscoito bolacha torta pudim sorvete chocolate brigadeiro beijinho goiabada paçoca pamonha canjica tapioca cuscuz pastel coxinha empada esfiha pizza hamburguer salsicha linguica presunto queijo manteiga requeijao iogurte leite cafe cha suco refrigerante agua cerveja vinho cachaça caipirinha limonada vitamina mamao banana laranja limao maca pera uva morango melancia melao abacaxi manga goiaba maracuja acerola caju jabuticaba pitanga amora framboesa cereja ameixa pessego abacate coco tangerina kiwi caqui figo romã lichia jaca graviola cupuacu acai mandioca batata cenoura beterraba tomate cebola alho pepino abobora chuchu quiabo jiló berinjela pimentao repolho alface couve rucula agriao espinafre brocolis couveflor milho ervilha lentilha grao soja amendoim castanha noz avela amendoa tempero sal pimenta oregano manjericao salsa cebolinha coentro hortela canela cravo gengibre acucar mel geleia azeite vinagre molho ketchup maionese mostarda omelete ovo bacon carne frango peixe bife churrasco picanha costela feijoada moqueca vatapa acaraje baiao tutu`,
+"Países e Cidades":`brasil portugal argentina chile uruguai paraguai bolivia peru colombia venezuela equador mexico canada italia franca espanha alemanha inglaterra holanda belgica suica suecia noruega dinamarca finlandia russia china japao india coreia tailandia vietna indonesia australia egito marrocos angola mocambique nigeria africa europa asia america oceania curitiba parana londrina maringa cascavel paranagua blumenau florianopolis joinville saopaulo campinas santos riodejaneiro niteroi salvador recife fortaleza natal belem manaus brasilia goiania cuiaba campogrande vitoria portoalegre gramado`,
+"Escola e Estudos":`escola professor aluno colegio faculdade universidade biblioteca caderno caneta lapis borracha apontador regua tesoura cola mochila estojo livro revista jornal dicionario enciclopedia atlas mapa globo lousa giz quadro prova teste nota boletim recreio merenda aula materia disciplina matematica portugues historia geografia ciencias fisica quimica biologia ingles filosofia sociologia artes musica educacao leitura escrita redacao gramatica ortografia texto palavra frase verbo adjetivo substantivo pronome adverbio vogal consoante sílaba pergunta resposta exercicio tarefa projeto trabalho pesquisa resumo diploma formatura vestibular estagio`,
+"Tecnologia":`computador notebook teclado mouse monitor tela impressora celular telefone tablet internet navegador aplicativo programa software hardware sistema arquivo pasta documento senha usuario servidor rede roteador wifi bluetooth cabo carregador bateria memoria processador algoritmo codigo variavel funcao objeto classe metodo biblioteca banco dados tabela consulta linguagem compilador depurador teste versao commit branch repositorio deploy nuvem email mensagem chat video audio imagem foto camera microfone alto falante fone robo drone satelite antena sinal pixel emoji hashtag download upload backup login logout cookie link pagina site blog portal`,
+"Profissões":`medico enfermeiro dentista professor engenheiro arquiteto advogado juiz policial bombeiro soldado piloto motorista cozinheiro padeiro açougueiro pescador agricultor fazendeiro pedreiro pintor eletricista encanador marceneiro mecanico soldador torneiro operador tecnico analista programador designer jornalista fotografo escritor poeta cantor musico ator atriz bailarino pintora escultor vendedor caixa gerente diretor presidente prefeito vereador deputado senador ministro governador secretario contador economista psicologo veterinario farmaceutico biologo quimico fisico matematico cientista pesquisador astronauta`,
+"Esportes":`futebol basquete voleibol handebol tenis natacao atletismo ciclismo corrida maratona ginastica judo karate boxe capoeira surfe skate patins esqui golfe beisebol rugby xadrez damas baralho dominó truco bingo gamao pingue pimpao bola gol goleiro zagueiro atacante meia lateral juiz arbitro torcida estadio campo quadra piscina raquete rede apito medalha trofeu campeao campeonato torneio copa placar escanteio pênalti impedimento drible chute passe cabeceio`,
+"Cores e Adjetivos":`azul vermelho amarelo verde laranja roxo rosa marrom preto branco cinza dourado prateado bege violeta turquesa vinho creme claro escuro colorido brilhante opaco liso aspero macio duro mole quente frio morno gelado seco molhado limpo sujo novo velho grande pequeno gordo magro alto baixo largo estreito comprido curto pesado leve rapido lento forte fraco bonito feio simpatico antipatico alegre triste calmo nervoso corajoso medroso inteligente esperto bobo sabio ingenuo honesto mentiroso generoso egoista paciente teimoso educado grosso preguicoso trabalhador cuidadoso distraido curioso timido sincero fiel`,
+"Corpo Humano":`cabeca cabelo testa sobrancelha olho pestana nariz boca labio lingua dente bochecha orelha pescoço garganta ombro braco cotovelo antebraco pulso mao dedo polegar unha peito costas barriga umbigo cintura quadril perna coxa joelho canela tornozelo pe calcanhar coracao pulmao figado rim estomago intestino cerebro osso musculo pele sangue veia nervo cintura`,
+"Natureza e Espaço":`sol lua estrela planeta terra marte venus jupiter saturno mercurio netuno urano plutao cometa asteroide galaxia universo foguete nave telescopio eclipse constelacao aurora meteoro orbita gravidade atmosfera clima tempo chuva trovao relampago raio tempestade furacao tornado vendaval neblina neve granizo geada orvalho nuvem arcoiris vento brisa calor inverno verao outono primavera estacao montanha vale colina planalto planicie deserto floresta mata selva cerrado pantanal caatinga pampa mangue praia costa ilha peninsula arquipelago cabo baia golfo oceano mar rio lago lagoa riacho cachoeira nascente fonte pantano geleira vulcao caverna gruta penhasco rocha pedra cascalho areia argila barro lama poeira fogo fumaca cinza carvao petroleo gas`,
+"Plantas":`arvore folha galho tronco raiz semente flor petala caule fruto espinho grama capim musgo samambaia bambu palmeira coqueiro pinheiro araucaria eucalipto ipe jacaranda mangueira laranjeira limoeiro goiabeira jabuticabeira cajueiro seringueira cacto orquidea rosa margarida girassol tulipa lirio jasmim violeta cravo hortensia begonia azaleia camelia gerbera bromelia`,
+"Transportes e Viagem":`carro caminhao onibus moto bicicleta trem metro aviao helicoptero barco navio lancha canoa jangada submarino balsa trator carroça charrete patinete triciclo ambulancia taxi uber van kombi jipe caminhonete reboque pneu volante freio acelerador embreagem motor farol buzina retrovisor para-brisa placa estrada rodovia avenida rua travessa viaduto tunel ponte calçada semaforo faixa rotatoria pedagio posto garagem oficina aeroporto rodoviaria estacao porto ferrovia trilho bilhete passagem viagem mala passaporte hotel pousada hospedagem turismo turista roteiro excursao`,
+"Roupas e Acessórios":`camisa camiseta calca bermuda short saia vestido blusa casaco jaqueta moletom pijama cueca calcinha sutia meia sapato tenis sandalia chinelo bota sapatilha chapeu bone gorro cachecol luva cinto gravata terno paleto colete biquini sunga maio bolsa carteira oculos brinco colar pulseira anel alianca relogio lenço guarda-chuva`,
+"Sentimentos":`alegria tristeza raiva medo amor odio saudade esperanca paixao ciume inveja orgulho vergonha culpa surpresa tedio angustia ansiedade felicidade coragem paz harmonia amizade carinho afeto ternura gratidao respeito confianca lealdade bondade honra justica liberdade verdade mentira sonho pesadelo memoria lembranca imaginacao pensamento ideia opiniao desejo vontade sorte azar destino`,
+"Família e Pessoas":`familia pai mae filho filha irmao irma avo avos neto neta tio tia primo prima sobrinho sobrinha cunhado cunhada genro nora sogro sogra marido esposa noivo noiva namorado namorada amigo amiga vizinho colega parceiro padrinho madrinha afilhado bebe crianca menino menina adolescente jovem adulto idoso senhor senhora pessoa gente povo`,
+"Datas e Tempo":`janeiro fevereiro marco abril maio junho julho agosto setembro outubro novembro dezembro segunda terca quarta quinta sexta sabado domingo semana mes ano seculo decada hora minuto segundo manha tarde noite madrugada meiodia aniversario natal pascoa carnaval feriado ferias festa casamento batizado velorio`,
+"Números":`um dois tres quatro cinco seis sete oito nove dez onze doze treze quatorze quinze dezesseis dezessete dezoito dezenove vinte trinta quarenta cinquenta sessenta setenta oitenta noventa cem mil milhao bilhao metade dobro triplo primeiro segundo terceiro ultimo`,
+"Verbos":`correr andar pular saltar nadar voar dançar cantar tocar pintar desenhar escrever ler falar ouvir olhar ver cheirar provar comer beber dormir acordar sonhar pensar lembrar esquecer aprender ensinar estudar trabalhar descansar brincar jogar ganhar perder vencer lutar bater empurrar puxar levantar carregar segurar soltar abrir fechar ligar desligar acender apagar cortar costurar cozinhar assar fritar ferver lavar secar limpar varrer arrumar guardar comprar vender pagar cobrar trocar emprestar devolver chamar responder perguntar explicar entender escolher decidir tentar conseguir esperar procurar encontrar achar buscar viajar chegar partir voltar entrar sair subir descer cair escorregar tropeçar caminhar passear visitar morar construir destruir consertar quebrar montar desmontar plantar colher regar crescer nascer viver morrer rir chorar sorrir gritar sussurrar abraçar beijar cumprimentar agradecer desculpar perdoar ajudar proteger salvar`,
+"Música":`musica cancao melodia ritmo harmonia violao guitarra baixo bateria piano teclado violino violoncelo flauta clarinete saxofone trompete trombone tuba harpa acordeao sanfona cavaquinho pandeiro tamborim surdo cuica berimbau atabaque triangulo gaita orquestra banda coral maestro show concerto festival samba forro sertanejo pagode bossanova rock jazz blues reggae funk rap opera valsa tango`,
+"Cinema e Fantasia":`cinema filme teatro peça novela serie desenho animacao documentario comedia drama terror suspense aventura romance ficcao fantasia herois vilao princesa princesa rei rainha principe castelo dragao fada bruxa mago gigante anao fantasma monstro pirata tesouro cavaleiro espada escudo armadura lanca arco flecha`,
+"Dinheiro e Comércio":`dinheiro moeda nota cedula cheque cartao banco conta saldo extrato poupanca emprestimo juros imposto salario renda lucro prejuizo preco desconto promocao liquidacao mercado feira loja shopping supermercado padaria farmacia livraria papelaria sapataria joalheria acougue peixaria quitanda barraca camelo balcao vitrine caixa recibo nota troco`,
+"Saúde":`saude doenca febre tosse gripe resfriado dor remedio vacina hospital clinica consulta exame receita cirurgia curativo bandagem gesso termometro seringa pressao diabetes alergia asma infeccao virus bacteria higiene vitamina exercicio dieta sono`,
+"Religião":`deus igreja templo capela catedral missa oracao biblia santo anjo demonio ceu inferno paraiso fe religiao crenca ritual bencao milagre`,
+"Governo e Cidadania":`governo estado cidade municipio bairro capital pais nacao bandeira hino constituicao lei decreto eleicao voto candidato partido politica democracia republica monarquia imperio cidadania direito dever policia exercito marinha justica tribunal cadeia prisao crime`,
+"História":`historia passado presente futuro antigo medieval moderno guerra paz batalha revolucao independencia descobrimento colonia escravidao abolicao republica ditadura egito grecia roma piramide faraó gladiador cavalaria invasao conquista tratado`,
+"Mistérios e Invenções":`aviao tesouro mistério enigma segredo charada adivinha desafio aventura jornada expedicao exploracao descoberta invencao inventor maquina ferramenta engrenagem alavanca polia roda eixo mola ima eletricidade energia usina turbina gerador transformador circuito corrente voltagem resistencia bateria lanterna vela fosforo isqueiro`,
+"Materiais":`paralelepipedo otorrinolaringologista cachoeira girassol esmeralda diamante rubi safira ouro prata bronze cobre ferro aco aluminio chumbo zinco niquel estanho platina madeira vidro plastico borracha couro papel papelao tecido algodao seda linho la nylon cera argila porcelana ceramica marmore granito`,
+"Diversos":`borboleta guarda-sol abecedario alfabeto carnaval chocolate felicidade paciencia biblioteca elefante computador aniversario astronauta dinossauro aquario terrario labirinto caleidoscopio trampolim escorregador gangorra balanco carrossel pipoca algodaodoce picole sorvete balao confete serpentina fantasia mascara brinquedo boneca carrinho bonequinho quebracabeca pelucia massinha pipa bolinha peteca piao ioio`
+};
+const clean=x=>[...new Set(x.split(/\s+/).map(w=>w.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase()).filter(w=>/^[a-z]{4,}$/.test(w)))];
+const POOL={};for(const t in THEMES)POOL[t]=clean(THEMES[t]);
+const DICT=[...new Set(Object.values(POOL).flat())];
+const WT={};for(const t in POOL)POOL[t].forEach(w=>{if(!WT[w])WT[w]=t});
+const LET="abcdefghijklmnopqrstuvwxyz".split("");
+const MAXERR=6;
+let S={phase:"setup",players:[],cur:0,word:"",guessed:new Set(),errs:0,used:new Set(),msg:"",th:"Todos",wt:""};
+const $=id=>document.getElementById(id);
+const app=$("app");
+function pick(){
+  const pool=S.th==="Todos"?DICT:POOL[S.th];
+  let free=pool.filter(w=>!S.used.has(w));
+  if(!free.length){pool.forEach(w=>S.used.delete(w));free=pool;}
+  const w=free[Math.floor(Math.random()*free.length)];
+  S.used.add(w);S.wt=S.th==="Todos"?WT[w]:S.th;return w;
+}
+function startGame(){
+  const names=[...document.querySelectorAll(".pn")].map(i=>i.value.trim()).filter(Boolean);
+  if(!names.length)return;
+  S.th=$("th").value;S.players=names.map(n=>({n,s:0}));S.cur=0;newRound();
+}
+function newRound(){
+  S.word=pick();S.guessed=new Set();S.errs=0;S.phase="play";S.msg="";
+  render();
+}
+function guess(l){
+  if(S.phase!=="play"||S.guessed.has(l))return;
+  S.guessed.add(l);
+  const p=S.players[S.cur];
+  if(S.word.includes(l)){
+    const n=S.word.split("").filter(c=>c===l).length;
+    p.s+=n;
+    if(S.word.split("").every(c=>S.guessed.has(c))){
+      p.s+=5;S.phase="won";S.msg=`🎉 ${p.n} completou a palavra! (+5 bônus)`;
+    }else S.msg=`✅ ${p.n} acertou! Joga de novo.`;
+  }else{
+    S.errs++;
+    if(S.errs>=MAXERR){S.phase="lost";S.msg="💀 Enforcados! Ninguém pontua o bônus.";}
+    else{S.cur=(S.cur+1)%S.players.length;S.msg=`❌ Errou! Vez de ${S.players[S.cur].n}.`;}
+  }
+  render();
+}
+function nextRound(){S.cur=(S.cur+1)%S.players.length;newRound();}
+function reset(){S={phase:"setup",players:[],cur:0,word:"",guessed:new Set(),errs:0,used:new Set(),msg:"",th:S.th,wt:""};render();}
+function gallows(){
+  const parts=['<circle cx="115" cy="55" r="16"/>','<line x1="115" y1="71" x2="115" y2="120"/>','<line x1="115" y1="85" x2="92" y2="105"/>','<line x1="115" y1="85" x2="138" y2="105"/>','<line x1="115" y1="120" x2="95" y2="155"/>','<line x1="115" y1="120" x2="135" y2="155"/>'];
+  return `<svg viewBox="0 0 170 190"><line x1="20" y1="180" x2="120" y2="180"/><line x1="45" y1="180" x2="45" y2="15"/><line x1="45" y1="15" x2="115" y2="15"/><line x1="115" y1="15" x2="115" y2="39"/>${parts.slice(0,S.errs).join("")}</svg>`;
+}
+function render(){
+  if(S.phase==="setup"){
+    app.innerHTML=`<div class="card"><b>Jogadores (1 a 6)</b><p class="mu">Revezamento no mesmo aparelho. Acertou: joga de novo (+1 ponto por letra). Errou: passa a vez. Completar a palavra vale +5. Os erros são compartilhados: ${MAXERR} e todo mundo perde a rodada.</p>
+    ${[1,2,3,4,5,6].map(i=>`<input class="pn" maxlength="14" placeholder="Jogador ${i}${i>1?" (opcional)":""}" value="${i<=2?"Jogador "+i:""}">`).join("")}
+    <label class="mu">Tema</label><select id="th"><option value="Todos">🎲 Todos os temas (${DICT.length} palavras)</option>${Object.keys(POOL).map(t=>`<option value="${t}" ${S.th===t?"selected":""}>${t} (${POOL[t].length})</option>`).join("")}</select><button class="p" onclick="startGame()" style="width:100%">Começar</button></div>`;
+    return;
+  }
+  const over=S.phase!=="play";
+  const shown=S.word.split("").map(c=>`<i>${S.guessed.has(c)||S.phase==="lost"?c:"&nbsp;"}</i>`).join("");
+  app.innerHTML=`<div class="card sc">${S.players.map((p,i)=>`<div class="pl ${i===S.cur&&!over?"on":""}"><b>${p.n}</b><span>${p.s}</span></div>`).join("")}</div>
+  <div class="card">${gallows()}<div class="msg" style="color:var(--ac)">Tema: ${S.wt}</div><div class="word">${shown}</div>
+  <div class="msg">${S.msg||`Vez de ${S.players[S.cur].n}`}</div>
+  <p class="mu" style="text-align:center">Erros: ${S.errs}/${MAXERR} · ${S.word.length} letras</p></div>
+  <div class="card"><div class="kb">${LET.map(l=>`<button ${S.guessed.has(l)||over?"disabled":""} class="${S.guessed.has(l)?(S.word.includes(l)?"h":"m"):""}" onclick="guess('${l}')">${l}</button>`).join("")}</div></div>
+  <div class="row">${over?`<button class="p" onclick="nextRound()">Próxima palavra</button>`:"<span></span>"}<button onclick="reset()">Novo jogo</button></div>`;
+}
+document.addEventListener("keydown",e=>{
+  if(S.phase!=="play"||e.ctrlKey||e.metaKey||e.altKey)return;
+  const k=e.key.toLowerCase();if(/^[a-z]$/.test(k))guess(k);
+});
+render();
+</script>
+</body>
+</html>
